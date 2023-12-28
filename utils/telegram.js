@@ -1,19 +1,11 @@
 const axios = require('axios');
-const { commandStartMessage } = require('./replyMessages');
+const { commandStartResponse } = require('./replyMessages');
 
-async function sendMessage(messageObj, messageText) {
+async function sendMessage(responseParams) {
     try {
-        const chatId = messageObj.chat.id;
-        const messageId = messageObj.message_id;
-
         await axios.get(`/sendMessage`, {
             baseURL: process.env.TELEGRAM_BOT_BASE_URL,
-            params: {
-                chat_id: chatId,
-                text: messageText,
-                reply_to_message_id: messageId,
-                parse_mode: 'MarkdownV2'
-            }
+            params: responseParams
         });
 
     } catch (error) {
@@ -25,8 +17,9 @@ async function sendMessage(messageObj, messageText) {
 async function handleMessage(messageObj) {
     try {
 
-        const messageText = messageObj.text;
         const chatId = messageObj.chat.id;
+        const messageId = messageObj.message_id;
+        const messageText = messageObj.text;
 
         if (messageText.charAt(0) === '/') {
             const command = messageText.substr(1);
@@ -34,20 +27,38 @@ async function handleMessage(messageObj) {
             switch (command) {
                 case 'start': {
 
-                    await sendMessage(messageObj, commandStartMessage);
+                    const responseParams = {
+                        chat_id: chatId,
+                        reply_to_message_id: messageId,
+                        ...commandStartResponse
+                    };
+
+                    await sendMessage(responseParams);
 
                     return { statusCode: 200 };
                 }
 
                 default: {
-                    await sendMessage(messageObj, 'Unkown command, please try again');
+                    const responseParams = {
+                        chat_id: chatId,
+                        reply_to_message_id: messageId,
+                        text: 'Unknown command, please try again'
+                    }
+
+                    await sendMessage(responseParams);
 
                     return { statusCode: 200 }
                 }
             }
         }
         else {
-            await sendMessage(messageObj, 'Please enter a command');
+            const responseParams = {
+                chat_id: chatId,
+                reply_to_message_id: messageId,
+                text: 'Please enter a command'
+            }
+
+            await sendMessage(responseParams);
 
             return { statusCode: 200 };
         }

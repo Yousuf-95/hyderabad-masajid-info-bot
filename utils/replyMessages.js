@@ -6,4 +6,9 @@ This bot can help you get Jamaat timings of Masajids in Hyderabad\\.
 
 /listareas \\- List available areas`;
 
-module.exports = { commandStartMessage };
+const commandStartResponse = {
+    text: commandStartMessage,
+    parse_mode: 'MarkdownV2'
+}
+
+module.exports = { commandStartResponse };
