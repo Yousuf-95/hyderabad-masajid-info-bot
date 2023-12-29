@@ -11,4 +11,23 @@ const commandStartResponse = {
     parse_mode: 'MarkdownV2'
 }
 
-module.exports = { commandStartResponse };
+const commandListAreasMessage = `List of areas with number of Masajids:
+
+1 \\- *Tolichowki*`;
+
+const commandListAreasReplyKeyboard = [
+    [
+        { text: 'Tolichowki' },
+    ]
+];
+
+const commandListAreasResponse = {
+    text: commandListAreasMessage,
+    reply_markup: JSON.stringify({
+        keyboard: commandListAreasReplyKeyboard,
+        one_time_keyboard: true,
+    }),
+    parse_mode: 'MarkdownV2',
+}
+
+module.exports = { commandStartResponse, commandListAreasResponse };

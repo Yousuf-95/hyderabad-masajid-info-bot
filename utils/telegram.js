@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { commandStartResponse } = require('./replyMessages');
+const { commandStartResponse, commandListAreasResponse } = require('./replyMessages');
 
 async function sendMessage(responseParams) {
     try {
@@ -34,6 +34,19 @@ async function handleMessage(messageObj) {
                     };
 
                     await sendMessage(responseParams);
+
+                    return { statusCode: 200 };
+                }
+
+                case 'listareas': {
+
+                    const reponseParams = {
+                        chat_id: chatId,
+                        reply_to_message_id: messageId,
+                        ...commandListAreasResponse
+                    }
+
+                    await sendMessage(reponseParams);
 
                     return { statusCode: 200 };
                 }
