@@ -65,13 +65,25 @@ async function handleMessage(messageObj) {
             }
         }
         else {
-            const responseParams = {
-                chat_id: chatId,
-                reply_to_message_id: messageId,
-                text: 'Please enter a command'
-            }
 
-            await sendMessage(responseParams);
+            if (messageText.toLowerCase() === 'Tolichowki') {
+                const responseParams = {
+                    chat_id: chatId,
+                    reply_to_message_id: messageId,
+                    text: 'Masjid-e-Khadijah'
+                }
+
+                await sendMessage(responseParams);
+            }
+            else {
+                const responseParams = {
+                    chat_id: chatId,
+                    reply_to_message_id: messageId,
+                    text: 'Please enter a command'
+                }
+
+                await sendMessage(responseParams);
+            }
 
             return { statusCode: 200 };
         }
