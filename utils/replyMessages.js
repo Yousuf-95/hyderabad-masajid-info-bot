@@ -30,4 +30,17 @@ const commandListAreasResponse = {
     parse_mode: 'MarkdownV2',
 }
 
-module.exports = { commandStartResponse, commandListAreasResponse };
+function selectedAreaResponse(listOfMasajid) {
+    let listOfMasajidInArea = ``;
+    for (let i = 0; i < listOfMasajid.length; i++) {
+        listOfMasajidInArea += `${listOfMasajid[0].name}\n`;
+    }
+
+    const responseMessage = `List of Masajid in ${listOfMasajid[0].area}:\n\n${listOfMasajidInArea}`
+
+    return {
+        text: responseMessage,
+    };
+}
+
+module.exports = { commandStartResponse, commandListAreasResponse, selectedAreaResponse };

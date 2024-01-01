@@ -1,5 +1,6 @@
 const axios = require('axios');
-const { commandStartResponse, commandListAreasResponse } = require('./replyMessages');
+const { commandStartResponse, commandListAreasResponse, selectedAreaResponse } = require('./replyMessages');
+const MasajidModel = require('../models/masajidInfoModel');
 
 async function sendMessage(responseParams) {
     try {
@@ -66,20 +67,23 @@ async function handleMessage(messageObj) {
         }
         else {
 
-            if (messageText.toLowerCase() === 'Tolichowki') {
+            const result = await MasajidModel.find({ area: messageText.toLowerCase() }).lean();
+            if (!result.length) {
                 const responseParams = {
                     chat_id: chatId,
                     reply_to_message_id: messageId,
-                    text: 'Masjid-e-Khadijah'
+                    text: 'Unknown area or Masjid code'
                 }
 
                 await sendMessage(responseParams);
             }
             else {
+                const responseMessage = selectedAreaResponse(result);
+
                 const responseParams = {
                     chat_id: chatId,
                     reply_to_message_id: messageId,
-                    text: 'Please enter a command'
+                    ...responseMessage
                 }
 
                 await sendMessage(responseParams);
