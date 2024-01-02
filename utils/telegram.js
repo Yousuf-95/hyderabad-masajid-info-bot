@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { commandStartResponse, commandListAreasResponse, selectedAreaResponse } = require('./replyMessages');
+const { commandStartResponse, listAreasResponse, selectedAreaResponse } = require('./replyMessages');
 const MasajidModel = require('../models/masajidInfoModel');
 
 async function sendMessage(responseParams) {
@@ -23,7 +23,7 @@ async function handleMessage(messageObj) {
         const messageText = messageObj.text;
 
         if (messageText.charAt(0) === '/') {
-            const command = messageText.substr(1);
+            const command = messageText.substring(1);
 
             switch (command) {
                 case 'start': {
@@ -40,6 +40,10 @@ async function handleMessage(messageObj) {
                 }
 
                 case 'listareas': {
+
+                    const listOfMasajid = await MasajidModel.distinct('area');
+
+                    const commandListAreasResponse = listAreasResponse(listOfMasajid);
 
                     const reponseParams = {
                         chat_id: chatId,

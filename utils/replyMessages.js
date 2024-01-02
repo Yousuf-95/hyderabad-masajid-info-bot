@@ -11,36 +11,47 @@ const commandStartResponse = {
     parse_mode: 'MarkdownV2'
 }
 
-const commandListAreasMessage = `List of areas with number of Masajids:
-
-1 \\- *Tolichowki*`;
-
-const commandListAreasReplyKeyboard = [
-    [
-        { text: 'Tolichowki' },
-    ]
-];
-
-const commandListAreasResponse = {
-    text: commandListAreasMessage,
-    reply_markup: JSON.stringify({
-        keyboard: commandListAreasReplyKeyboard,
-        one_time_keyboard: true,
-    }),
-    parse_mode: 'MarkdownV2',
-}
-
 function selectedAreaResponse(listOfMasajid) {
     let listOfMasajidInArea = ``;
     for (let i = 0; i < listOfMasajid.length; i++) {
-        listOfMasajidInArea += `${listOfMasajid[0].name}\n`;
+        listOfMasajidInArea += `${listOfMasajid[i].name.includes('-') ? listOfMasajid[i].name.replaceAll('-', '\\-') : listOfMasajid[i].name}\n`;
     }
 
-    const responseMessage = `List of Masajid in ${listOfMasajid[0].area}:\n\n${listOfMasajidInArea}`
+    const responseMessage = `List of Masajid in *${listOfMasajid[0].area.charAt(0).toUpperCase() + listOfMasajid[0].area.substring(1)}*:\n\n${listOfMasajidInArea}`
 
     return {
         text: responseMessage,
+        parse_mode: 'MarkdownV2'
     };
 }
 
-module.exports = { commandStartResponse, commandListAreasResponse, selectedAreaResponse };
+function listAreasResponse(listOfMasajid) {
+
+    let listOfAreas = ``;
+    let listAreasKeyboard = [];
+
+    for (let i = 0; i < listOfMasajid.length; i++) {
+        listOfAreas += `*${i + 1}* \\- ${listOfMasajid[i]}\n`;
+
+        listAreasKeyboard.push([
+            {
+                text: `${listOfMasajid[i].charAt(0).toUpperCase() + listOfMasajid[i].substring(1)}`
+            }
+        ]);
+    }
+
+    const commandListAreasMessage = `List of areas:\n\n${listOfAreas}`;
+
+    const commandListAreasResponse = {
+        text: commandListAreasMessage,
+        reply_markup: JSON.stringify({
+            keyboard: listAreasKeyboard,
+            one_time_keyboard: true,
+        }),
+        parse_mode: 'MarkdownV2',
+    }
+
+    return commandListAreasResponse;
+}
+
+module.exports = { commandStartResponse, listAreasResponse, selectedAreaResponse };
