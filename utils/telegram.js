@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { commandStartResponse, listAreasResponse, selectedAreaResponse } = require('./replyMessages');
+const { commandStartResponse, listAreasResponse, selectedAreaResponse, jamaatTimingResponse } = require('./replyMessages');
 const MasajidModel = require('../models/masajidInfoModel');
 
 async function sendMessage(responseParams) {
@@ -70,24 +70,44 @@ async function handleMessage(messageObj) {
             }
         }
         else {
+            let queryResult;
 
-            const result = await MasajidModel.find({ area: messageText.toLowerCase() }).lean();
-            if (!result.length) {
-                const responseParams = {
-                    chat_id: chatId,
-                    reply_to_message_id: messageId,
-                    text: 'Unknown area or Masjid code'
+            if (messageText.includes('-')) {
+                queryResult = await MasajidModel.findOne({ name: messageText }).lean();
+
+                if (queryResult) {
+                    const responseMessage = jamaatTimingResponse(queryResult);
+
+                    const responseParams = {
+                        chat_id: chatId,
+                        reply_to_message_id: messageId,
+                        ...responseMessage
+                    }
+
+                    await sendMessage(responseParams);
                 }
-
-                await sendMessage(responseParams);
             }
             else {
-                const responseMessage = selectedAreaResponse(result);
+                queryResult = await MasajidModel.find({ area: messageText.toLowerCase() }).lean();
 
+                if (queryResult.length) {
+                    const responseMessage = selectedAreaResponse(queryResult);
+
+                    const responseParams = {
+                        chat_id: chatId,
+                        reply_to_message_id: messageId,
+                        ...responseMessage
+                    }
+
+                    await sendMessage(responseParams);
+                }
+            }
+
+            if (!queryResult || queryResult?.length === 0) {
                 const responseParams = {
                     chat_id: chatId,
                     reply_to_message_id: messageId,
-                    ...responseMessage
+                    text: 'Unknown area or Masjid name'
                 }
 
                 await sendMessage(responseParams);

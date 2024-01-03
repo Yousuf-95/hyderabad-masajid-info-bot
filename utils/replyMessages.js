@@ -13,14 +13,25 @@ const commandStartResponse = {
 
 function selectedAreaResponse(listOfMasajid) {
     let listOfMasajidInArea = ``;
+    let listOfMasajidKeyboard = [];
     for (let i = 0; i < listOfMasajid.length; i++) {
         listOfMasajidInArea += `${listOfMasajid[i].name.includes('-') ? listOfMasajid[i].name.replaceAll('-', '\\-') : listOfMasajid[i].name}\n`;
+
+        listOfMasajidKeyboard.push([
+            {
+                text: listOfMasajid[i].name
+            }
+        ])
     }
 
     const responseMessage = `List of Masajid in *${listOfMasajid[0].area.charAt(0).toUpperCase() + listOfMasajid[0].area.substring(1)}*:\n\n${listOfMasajidInArea}`
 
     return {
         text: responseMessage,
+        reply_markup: JSON.stringify({
+            keyboard: listOfMasajidKeyboard,
+            one_time_keyboard: true,
+        }),
         parse_mode: 'MarkdownV2'
     };
 }
@@ -54,4 +65,19 @@ function listAreasResponse(listOfMasajid) {
     return commandListAreasResponse;
 }
 
-module.exports = { commandStartResponse, listAreasResponse, selectedAreaResponse };
+function jamaatTimingResponse(masjidInfo) {
+    let jamaatTimingMessage = ``;
+
+    for (let time in masjidInfo.timing) {
+        jamaatTimingMessage += `*${time}* \\- ${masjidInfo.timing[time]}\n`
+    }
+
+    const responseMessage = `Jamaat timing for: ${masjidInfo.name.replaceAll('-', '\\-')}\n\n${jamaatTimingMessage}`;
+
+    return {
+        text: responseMessage,
+        parse_mode: 'MarkdownV2'
+    }
+}
+
+module.exports = { commandStartResponse, listAreasResponse, selectedAreaResponse, jamaatTimingResponse };
