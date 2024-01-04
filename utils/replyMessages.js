@@ -42,7 +42,7 @@ function listAreasResponse(listOfMasajid) {
     let listAreasKeyboard = [];
 
     for (let i = 0; i < listOfMasajid.length; i++) {
-        listOfAreas += `*${i + 1}* \\- ${listOfMasajid[i]}\n`;
+        listOfAreas += `*${i + 1}* \\- ${listOfMasajid[i].charAt(0).toUpperCase() + listOfMasajid[i].substring(1)}\n`;
 
         listAreasKeyboard.push([
             {
@@ -69,10 +69,10 @@ function jamaatTimingResponse(masjidInfo) {
     let jamaatTimingMessage = ``;
 
     for (let time in masjidInfo.timing) {
-        jamaatTimingMessage += `*${time}* \\- ${masjidInfo.timing[time]}\n`
+        jamaatTimingMessage += `*${time.charAt(0).toUpperCase() + time.substring(1)}* \\- ${masjidInfo.timing[time]}\n`
     }
 
-    const responseMessage = `Jamaat timing for: ${masjidInfo.name.replaceAll('-', '\\-')}\n\n${jamaatTimingMessage}`;
+    const responseMessage = `Jamaat timing for: *${masjidInfo.name.replaceAll('-', '\\-')}*\n\n${jamaatTimingMessage}`;
 
     return {
         text: responseMessage,
